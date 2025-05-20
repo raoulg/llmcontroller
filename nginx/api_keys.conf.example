@@ -1,0 +1,8 @@
+# This file is managed on the host and mounted into the Nginx container.
+# After updating this file, Nginx must be reloaded:
+#   docker exec ollama_nginx_gateway nginx -s reload
+#
+# Format: "Bearer <your_api_key>" 1;  (the '1' means authorized)
+
+# "Bearer verySecretKey123"         1;
+# Add more keys as needed
