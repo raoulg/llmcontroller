@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  ollama_nginx_gateway:
+    build:
+      context: ./nginx  # Path to the directory containing the Dockerfile
+      dockerfile: Dockerfile
+    container_name: ollama_nginx_gateway
+    ports:
+      - "8080:80"  # Map port 8080 on your host to port 80 in the container
+                   # Clients will connect to http://<your_controller_machine_ip>:8080
+    volumes:
+      # Mount your API key file (read-only for security within the container)
+      - ./nginx/api_keys.conf:/etc/nginx/custom_conf/api_keys.conf:ro
+      # Mount your upstream server list file (read-only)
+      - ./nginx/upstream_ollama.conf:/etc/nginx/custom_conf/upstream_ollama.conf:ro
+      # Mount a volume for Nginx logs so they persist and are accessible on the host
+      - ./logs:/var/log/nginx
+    restart: unless-stopped # Restart the container unless it's manually stopped
+    networks:
+      - ollama_network # Optional: define a custom network if you add more services
+
+# Optional: Define a custom Docker network
+networks:
+  ollama_network:
+    driver: bridge
+
+# --- Placeholder for your future GUI/API key management service ---
+#  key_management_gui:
+#    image: your-future-gui-image # Replace with your actual GUI image
+#    container_name: key_management_gui
+#    ports:
+#      - "3000:3000" # Example port for the GUI
+#    volumes:
+      # This service might need to write to api_keys.conf if it's managing it directly,
+      # or it would interact with a database and Nginx would use auth_request.
+      # If it writes to api_keys.conf, the volume mount would need to be read-write (rw).
+      # - ./nginx/api_keys.conf:/app/data/api_keys.conf:rw
+#    networks:
+#      - ollama_network
+#    depends_on:
+#      - ollama_nginx_gateway # If it needs Nginx to be up first
