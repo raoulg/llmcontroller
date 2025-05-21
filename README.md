@@ -29,11 +29,11 @@ This project provides a Dockerized Nginx setup to act as a secure gateway for yo
 ```
 ## Setup Instructions
 
-1.  **Clone/Download Project Files:**
-    Ensure you have all the files (`docker-compose.yml`, and the `nginx` directory with its contents) as described in the directory structure.
+1.  **Clone/Download Project**
 
 2.  **Configure Backend Ollama Servers:**
-    Edit the `ollama-nginx-gateway/nginx/upstream_ollama.conf` file on your host machine. List the IP addresses (or hostnames) and ports of your Ollama instances.
+Copy the `nginx/upstream_ollama.conf.example` to `nginx/upstream_ollama.conf`.
+    Edit the `nginx/upstream_ollama.conf` file by listing the IP addresses (or hostnames) and ports of your Ollama GPU instances.
 
     **Example `nginx/upstream_ollama.conf`:**
     ```nginx
@@ -51,17 +51,11 @@ This project provides a Dockerized Nginx setup to act as a secure gateway for yo
     * **Generating API Keys (CLI):**
         You can use various tools to generate strong random strings for your API keys. Here are a couple of examples:
 
-        * **Using `openssl` (recommended for strong keys):**
+        * **Using `openssl`:**
             ```bash
             openssl rand -hex 32
             ```
             This will output a 64-character hexadecimal string (e.g., `a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2`).
-
-        * **Using `uuidgen` (simpler, universally unique):**
-            ```bash
-            uuidgen
-            ```
-            This will output a standard UUID (e.g., `f47ac10b-58cc-4372-a567-0e02b2c3d479`).
 
     * **Adding Keys to `api_keys.conf`:**
         Open `ollama-nginx-gateway/nginx/api_keys.conf` and add your generated keys. The Nginx configuration expects keys to be prefixed with `Bearer `.
