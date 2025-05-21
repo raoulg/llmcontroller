@@ -9,7 +9,7 @@ services:
                    # Clients will connect to http://<your_controller_machine_ip>:8080
     volumes:
       - ./nginx/api_keys.conf:/etc/nginx/custom_conf/api_keys.conf:ro
-      - ./nginx/upstream_ollama.conf:/etc/nginx/custom_conf/upstream_ollama.conf:ro
+      # - ./nginx/upstream_ollama.conf:/etc/nginx/custom_conf/upstream_ollama.conf:ro
       - ./nginx/conf.d/ollama_gateway.conf:/etc/nginx/conf.d/ollama_gateway.conf:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./logs:/var/log/nginx
@@ -34,6 +34,8 @@ services:
       - AUTO_PAUSE_CHECK_INTERVAL=${AUTO_PAUSE_CHECK_INTERVAL:-60}
       - AUTO_PAUSE_INACTIVITY_THRESHOLD=${AUTO_PAUSE_INACTIVITY_THRESHOLD:-600}
       - WAKEUP_TIMEOUT_SECONDS=${WAKEUP_TIMEOUT_SECONDS:-150}
+      - TARGET_ACTIVE_GPUS=${TARGET_ACTIVE_GPUS:-1}
+      - SCALE_UP_COOLDOWN_SECONDS=${SCALE_UP_COOLDOWN_SECONDS:-60}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - ./vm_data:/app/vm_data:ro
