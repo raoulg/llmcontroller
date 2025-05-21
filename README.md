@@ -73,7 +73,7 @@ Copy the `nginx/upstream_ollama.conf.example` to `nginx/upstream_ollama.conf`.
     Navigate to the root `ollama-nginx-gateway` directory in your terminal (the one containing `docker-compose.yml`).
     Run the following command:
     ```bash
-    docker-compose up --build -d
+    docker compose up --build -d
     ```
     * `--build`: Builds the Nginx Docker image if it doesn't exist or if the Dockerfile has changed.
     * `-d`: Runs the containers in detached mode (in the background).
@@ -85,7 +85,7 @@ Copy the `nginx/upstream_ollama.conf.example` to `nginx/upstream_ollama.conf`.
 1.  **Client Configuration:**
     Clients (like LM Studio, Aider, `curl`, or your custom applications) should send requests to:
     * **Endpoint:** `http://<your_controller_machine_ip>:8080`
-        (Replace `<your_controller_machine_ip>` with the IP address of the machine running Docker, and `8080` is the host port mapped in `docker-compose.yml`. You can change this mapping if needed.)
+        (Replace `<your_controller_machine_ip>` with the IP address of the machine running Docker, and `8080` is the host port mapped in `docker compose.yml`. You can change this mapping if needed.)
     * **HTTP Header for API Key:** Clients **must** include an `Authorization` header with the API key:
         ```
         Authorization: Bearer <your_api_key>
@@ -113,7 +113,7 @@ Copy the `nginx/upstream_ollama.conf.example` to `nginx/upstream_ollama.conf`.
 
 ## Log Management
 
-* Nginx access and error logs are stored in the `ollama-nginx-gateway/logs/` directory on your host machine. This is configured via the volume mount in `docker-compose.yml`.
+* Nginx access and error logs are stored in the `ollama-nginx-gateway/logs/` directory on your host machine. This is configured via the volume mount in `docker compose.yml`.
 * You can view live logs from the Nginx container using:
     ```bash
     docker logs -f ollama_nginx_gateway
@@ -123,10 +123,10 @@ Copy the `nginx/upstream_ollama.conf.example` to `nginx/upstream_ollama.conf`.
 
 To stop the Nginx gateway:
 ```bash
-docker-compose down
+docker compose down
 ```
 To stop and remove volumes (like logs, if not needed, though typically you'd want to keep logs):
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
