@@ -1,3 +1,4 @@
 nginx/api_keys.conf
 nginx/upstream_ollama.conf
 logs/
+secrets/
