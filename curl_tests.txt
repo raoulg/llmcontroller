@@ -1,0 +1,3 @@
+curl http://145.38.194.153:11434/api/generate -d '{"model": "qwen3:32b", "prompt":"Why is the sky blue?", "stream" : false}'
+
+curl http://145.38.194.153:11434/api/generate -d '{"model": "phi3", "prompt" : "why is the sky blue", "stream" : false}'
