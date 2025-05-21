@@ -2,3 +2,4 @@ nginx/api_keys.conf
 nginx/upstream_ollama.conf
 logs/
 .env
+vm_data/surf_vms.csv
