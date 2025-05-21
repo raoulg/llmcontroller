@@ -1,8 +1,8 @@
+import logging
 import os
 import time
+
 import requests
-import logging
-from pathlib import Path
 
 # Configure basic logging
 logging.basicConfig(
@@ -14,28 +14,20 @@ logger = logging.getLogger(__name__)
 class SurfVMController:
     def __init__(self):
         self.base_url = os.getenv("SURF_API_URL")
-        api_token_path = Path(
-            os.getenv("SURF_API_TOKEN_PATH", "/run/secrets/surf_api_token.txt")
-        )
-        csrf_token_path = Path(
-            os.getenv("SURF_CSRF_TOKEN_PATH", "/run/secrets/surf_csrf_token.txt")
-        )
+        self.auth_token = os.getenv("SURF_API_TOKEN")  # Read directly from env
+        self.csrf_token = os.getenv("SURF_CSRF_TOKEN")  # Read directly from env
 
         if not self.base_url:
             logger.error("SURF_API_URL environment variable not set.")
             raise ValueError("SURF_API_URL not set")
 
-        if api_token_path.exists():
-            self.auth_token = api_token_path.read_text().strip()
-        else:
-            logger.error(f"SURF API token not found at {api_token_path}")
-            raise FileNotFoundError(f"SURF API token not found at {api_token_path}")
+        if not self.auth_token:
+            logger.error("SURF_API_TOKEN environment variable not set.")
+            raise ValueError("SURF_API_TOKEN not set")
 
-        if csrf_token_path.exists():
-            self.csrf_token = csrf_token_path.read_text().strip()
-        else:
-            logger.error(f"SURF CSRF token not found at {csrf_token_path}")
-            raise FileNotFoundError(f"SURF CSRF token not found at {csrf_token_path}")
+        if not self.csrf_token:
+            logger.error("SURF_CSRF_TOKEN environment variable not set.")
+            raise ValueError("SURF_CSRF_TOKEN not set")
 
     def _make_action_request(self, vm_id: str, action: str) -> bool:
         """
@@ -51,7 +43,7 @@ class SurfVMController:
         headers = {
             "accept": "application/json;Compute",
             "authorization": self.auth_token,
-            "Content-Type": f"application/json;{action}",  # As per your script
+            "Content-Type": f"application/json;{action}",
             "X-CSRFTOKEN": self.csrf_token,
         }
 
@@ -66,8 +58,6 @@ class SurfVMController:
             )  # 30s timeout for the API call itself
             response.raise_for_status()  # Will raise an HTTPError for bad responses (4XX or 5XX)
 
-            # Assuming 2xx means success for action triggers. Some APIs return 202 Accepted.
-            # You might need to adjust based on actual SURF API behavior for actions.
             if 200 <= response.status_code < 300:
                 logger.info(
                     f"{timestamp} | VM: {vm_id} | Action '{action}' triggered successfully. Status: {response.status_code}"
@@ -106,14 +96,9 @@ if __name__ == "__main__":
 
     load_dotenv()  # Load .env file if present
 
-    if not os.getenv("SURF_API_URL") or not os.getenv("SURF_VM_ID_TO_TEST"):
-        print(
-            "Please set SURF_API_URL and SURF_VM_ID_TO_TEST environment variables for testing."
-        )
-    else:
-        controller = SurfVMController()
-        test_vm_id = os.getenv("SURF_VM_ID_TO_TEST", "test")
-        print(f"Attempting to resume VM: {test_vm_id}")
-        success = controller.resume_vm(test_vm_id)
-        # success = controller.pause_vm(test_vm_id)
-        print(f"Resume success: {success}")
+    controller = SurfVMController()
+    test_vm_id = os.getenv("SURF_VM_ID_TO_TEST", "test")
+    print(f"Attempting to resume VM: {test_vm_id}")
+    success = controller.resume_vm(test_vm_id)
+    # success = controller.pause_vm(test_vm_id)
+    print(f"Resume success: {success}")
